@@ -1,797 +1,354 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WEMOVE - Ensemble avec vous</title>
-  <!-- Fonts et icônes -->
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    /* Variables couleurs et typographie */
-    :root {
-      --blue-light: #2B6CB0;
-      --blue-medium: #1A365D;
-      --blue-dark: #0F1A2A;
-      --blue-accent: #4299E1;
-      --black: #000000;
-      --gray-light: #E2E8F0;
-      --gray-medium: #718096;
-      --gray-dark: #2D3748;
-      --white: #FFFFFF;
-    }
-    body {
-      margin:0; padding:0; box-sizing:border-box;
-      font-family: 'General Sans', sans-serif;
-      background-color: var(--black);
-      color: var(--gray-light);
-      overflow-x: hidden;
-    }
-    /* Backdrop glass effect on containers */
-    section, .service-card, .team-member, .contact-info, .contact-form, .presentation {
-      background: rgba(26, 54, 93, 0.25);
-      border: 1px solid rgba(66, 153, 225, 0.1);
-      border-radius: 10px;
-      padding: 1rem;
-      backdrop-filter: blur(10px);
-      transition: transform 0.3s ease;
-    }
-    section:hover, .service-card:hover, .team-member:hover, .contact-info:hover, .contact-form:hover {
-      transform: translateY(-5px);
-    }
-    /* Header */
-    .header {
-      position: fixed; top: 0; left: 0; width: 100%;
-      padding: 1rem 5%;
-      background-color: rgba(0,0,0,0.95);
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--blue-medium); z-index:1000;
-    }
-    .logo {
-      position: relative; display:flex; align-items:center; gap:12px; text-decoration:none; color:var(--white);
-    }
-    .logo-icon {
-      width:40px; height:40px;
-      background: var(--blue-light); border-radius:8px;
-      display:flex; align-items:center; justify-content:center;
-      font-weight:700; font-size:1.2rem; color:var(--white);
-    }
-    .logo-text {
-      font-size:1.8rem; font-weight:700;
-    }
-    .logo-square {
-      position: absolute;
-      width: 60px; height: 60px;
-      background: rgba(43, 108, 176, 0.3);
-      top: -10px; left: -15px;
-      transform: rotate(-45deg);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--white); font-size:0.7rem;
-      z-index: -1;
-      font-weight:600;
-    }
-    .logo-square::after {
-      content: 'WEMOVE';
-    }
-    .nav {
-      display: flex; gap:2rem;
-    }
-    .nav a {
-      color: var(--gray-light); text-decoration:none;
-      font-size: 1rem; font-weight:500;
-      transition: color 0.3s;
-      position: relative;
-    }
-    .nav a:hover { color: var(--blue-accent); }
-    .nav a::after {
-      content: '';
-      position: absolute; bottom: -4px; left:0;
-      height:2px; width:0; background: var(--blue-accent);
-      transition: width 0.3s;
-    }
-    .nav a:hover::after { width: 100%; }
-    /* Boutons */
-    .btn {
-      padding: 0.9rem 2rem; border-radius:6px;
-      font-weight:600; font-size:1rem;
-      text-decoration:none; border:none; cursor:pointer;
-      transition: all 0.3s;
-      overflow: hidden; position: relative;
-    }
-    .btn:focus { outline: none; }
-    .btn-primary {
-      background-color: var(--blue-light); color: var(--white);
-    }
-    .btn-primary:hover {
-      background-color: var(--blue-accent); transform: translateY(-2px);
-    }
-    .btn-secondary {
-      background-color: transparent; color: var(--blue-accent);
-      border:1px solid var(--blue-medium);
-    }
-    .btn-secondary:hover {
-      background-color: rgba(66,153,225,0.1);
-    }
-    /* Ripple effect */
-    .btn .ripple {
-      position: absolute; border-radius:50%;
-      transform: scale(0);
-      background: rgba(255,255,255,0.6);
-      animation: ripple-animation 0.6s linear;
-      pointer-events: none;
-    }
-    @keyframes ripple-animation {
-      to { transform: scale(4); opacity: 0; }
-    }
-    /* Language/Country/Theme toggles */
-    .controls {
-      display: flex; align-items: center; gap: 1rem;
-    }
-    .controls select {
-      padding:0.5rem 0.8rem; background: var(--blue-dark);
-      color: var(--gray-light); border:1px solid var(--blue-medium);
-      border-radius:4px; font-size:0.9rem;
-    }
-    .theme-toggle {
-      cursor: pointer; font-size:1.2rem;
-    }
-    /* Hamburger */
-    .hamburger {
-      display: none; flex-direction: column; gap:4px; cursor: pointer;
-      z-index:1100;
-    }
-    .hamburger span {
-      width:25px; height:3px; background: var(--white);
-      transition: all 0.3s;
-    }
-    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
-    @media (max-width: 768px) {
-      .nav { display: none; flex-direction: column; background: rgba(0,0,0,0.9); position:absolute; top:100%; right:0; width:200px; padding:1rem; }
-      .nav.show { display: flex; }
-      .hamburger { display: flex; }
-    }
-    /* Sections et contenu */
-    main { padding-top: 90px; }
-    .section { padding: 4rem 5% 5rem; max-width:1200px; margin: auto; }
-    .text-center { text-align: center; }
-    h1 { font-size:3rem; color: var(--white); margin-bottom:1.5rem; }
-    h2 { font-size:2.2rem; color: var(--blue-accent); margin-bottom:2rem; }
-    h3 { font-size:1.5rem; color: var(--white); margin-bottom:1rem; }
-    p { font-size:1.1rem; margin-bottom:1.5rem; }
-    .hero-subtitle {
-      color: var(--blue-accent); font-weight:600; font-size:1.1rem;
-      margin-bottom:1rem; letter-spacing:1px;
-    }
-    /* Présentation (About) */
-    .presentation h2, .presentation h3 { color: var(--white); }
-    .presentation p { margin: 1rem 0; color: var(--gray-light); }
-    .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:2rem; margin-top:1rem; }
-    .values-grid h3 { color: var(--white); }
-    /* Services / Expertise carousel */
-    .hero-services { min-height: calc(70vh - 90px); display: flex; align-items:center; }
-    .services-carousel {
-      position: relative; overflow: hidden; width: 100%; margin-top:3rem;
-    }
-    .carousel-container {
-      display: flex; transition: transform 0.5s ease;
-    }
-    .service-card {
-      flex: 0 0 300px; margin-right: 2rem;
-    }
-    .service-icon { font-size:2.5rem; color: var(--blue-accent); margin-bottom:1.5rem; }
-    .service-features { list-style: none; padding-left:0; margin-top:1rem; }
-    .service-features li {
-      margin-bottom:0.5rem; padding-left:1.5rem; position: relative;
-    }
-    .service-features li::before {
-      content: '▸'; color: var(--blue-accent); position: absolute; left:0;
-    }
-    .carousel-nav {
-      position: absolute; top:50%; transform: translateY(-50%);
-      width: 100%; display: flex; justify-content: space-between;
-      pointer-events: none;
-    }
-    .carousel-nav button {
-      background: rgba(0,0,0,0.5); border:none; padding:0.5rem;
-      color: var(--white); cursor: pointer; pointer-events: all;
-    }
-    /* Team Grid */
-    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:3rem; margin-top:3rem; }
-    .member-header { display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem; }
-    .member-avatar {
-      width:70px; height:70px; border-radius:50%;
-      background: linear-gradient(135deg, var(--blue-light), var(--blue-accent));
-      color: var(--white); display:flex; align-items:center; justify-content:center;
-      font-size:1.8rem; font-weight:600;
-    }
-    .member-name { font-size:1.5rem; color: var(--white); margin-bottom:0.5rem; }
-    .member-role { color: var(--blue-accent); font-weight:500; }
-    .member-skills { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem; }
-    .skill-tag {
-      background: rgba(66, 153, 225, 0.1);
-      color: var(--blue-accent);
-      padding: 0.3rem 0.8rem; border-radius:20px; font-size:0.9rem;
-    }
-    /* Contact */
-    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:3rem; margin-top:3rem; }
-    .contact-item { margin-bottom:2rem; }
-    .contact-item h3 { display: flex; align-items:center; gap:10px; margin-bottom:0.5rem; }
-    .contact-item i { color: var(--blue-accent); }
-    .contact-form form { display:flex; flex-direction:column; }
-    .form-group { margin-bottom:1.5rem; }
-    .form-label { color:var(--white); margin-bottom:0.5rem; display:block; }
-    .form-input {
-      width:100%; padding:1rem; border:1px solid rgba(66,153,225,0.2);
-      border-radius:6px; background: var(--blue-dark); color: var(--gray-light);
-      font-size:1rem; transition: border-color 0.3s;
-    }
-    .form-input:focus { outline:none; border-color: var(--blue-accent); }
-    textarea.form-input { min-height:150px; resize:vertical; }
-    /* Footer */
-    .footer { background-color: var(--blue-dark); padding:3rem 5% 2rem; border-top:1px solid var(--blue-medium); }
-    .footer-content {
-      max-width:1200px; margin: auto; display:flex; justify-content:space-between;
-      flex-wrap:wrap; gap:2rem;
-    }
-    .footer-section { flex:1; min-width:250px; }
-    .footer-section h3 { color: var(--white); margin-bottom:1rem; }
-    .footer-section p, .footer-section a { color: var(--gray-light); text-decoration:none; }
-    .footer-links { list-style:none; padding:0; }
-    .footer-links li { margin-bottom:0.8rem; }
-    .footer-links a:hover { color: var(--blue-accent); }
-    .copyright { text-align:center; padding-top:2rem; margin-top:2rem;
-      border-top:1px solid var(--blue-medium); color: var(--gray-medium); font-size:0.9rem;
-    }
-    /* Animations */
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .showing .fade-in { opacity: 1; transform: translateY(0); }
-    /* Raindrops */
-    .drop {
-      position:absolute; top: -10px; width: 2px; height: 10px;
-      background: rgba(255,255,255,0.5);
-      animation: drop-fall 3s linear forwards;
-    }
-    @keyframes drop-fall {
-      to { transform: translateY(110vh); opacity: 0; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEMOVE - Futuriste</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        :root {
+            --primary: #8b5cf6;
+            --accent: #ec4899;
+            --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 35%, #831843 70%, #1e1b4b 100%);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Effet Verre iOS 26 */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Gouttes d'eau */
+        .drop {
+            position: fixed;
+            width: 2px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
+            animation: rain linear forwards;
+        }
+        @keyframes rain {
+            to { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Effet Ripple */
+        .ripple {
+            position: fixed;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+            animation: ripple-out 0.8s ease-out forwards;
+            z-index: 1000;
+        }
+        @keyframes ripple-out {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* Animation WEMOVE */
+        #word-container {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .letter {
+            position: absolute;
+            font-weight: 800;
+            font-size: 4rem;
+            opacity: 0;
+            display: inline-block;
+        }
+
+        /* Logo Central */
+        .center-logo {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.15;
+            width: 300px;
+            z-index: -2;
+            filter: drop-shadow(0 0 20px var(--primary));
+        }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        #mobile-menu {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
 </head>
-<body>
-  <div class="african-pattern"></div> <!-- Optionnel : motifs discrets -->
-  <header class="header">
-    <!-- Logo WEMOVE -->
-    <a href="javascript:void(0)" onclick="showPage('home')" class="logo">
-      <div class="logo-square"></div>
-      <div class="logo-icon">W</div>
-      <div class="logo-text">WEMOVE</div>
-    </a>
-    <!-- Contrôles langue/pays/jour-nuit -->
-    <div class="controls">
-      <select id="lang-select">
-        <option value="fr">FR</option>
-        <option value="en">EN</option>
-        <option value="ar">AR</option>
-        <option value="zh">中</option>
-        <option value="de">DE</option>
-        <option value="es">ES</option>
-        <option value="pt">PT</option>
-        <option value="ru">RU</option>
-        <option value="hi">HI</option>
-        <option value="it">IT</option>
-        <option value="ja">JA</option>
-        <option value="ko">KO</option>
-      </select>
-      <select id="country-select">
-        <option value="cm">🇨🇲 Cameroun</option>
-        <option value="fr">🇫🇷 France</option>
-        <option value="us">🇺🇸 États-Unis</option>
-        <option value="de">🇩🇪 Allemagne</option>
-        <option value="cn">🇨🇳 Chine</option>
-        <option value="in">🇮🇳 Inde</option>
-        <option value="ng">🇳🇬 Nigeria</option>
-        <option value="gb">🇬🇧 Royaume-Uni</option>
-        <!-- Ajoutez d'autres pays... -->
-      </select>
-      <div id="theme-toggle" class="theme-toggle">☀️/🌙</div>
-    </div>
-    <!-- Navigation -->
-    <nav class="nav">
-      <a href="javascript:void(0)" onclick="showPage('home')">Accueil</a>
-      <a href="javascript:void(0)" onclick="showPage('about')">À propos</a>
-      <a href="javascript:void(0)" onclick="showPage('services')">Services</a>
-      <a href="javascript:void(0)" onclick="showPage('team')">Équipe</a>
-      <a href="javascript:void(0)" onclick="showPage('contact')">Contact</a>
-    </nav>
-    <!-- Hamburger -->
-    <div class="hamburger" id="hamburger">
-      <span></span><span></span><span></span>
-    </div>
-  </header>
+<body class="selection:bg-pink-500">
 
-  <main class="main-content">
-    <!-- Page Accueil -->
-    <div id="home-page" class="page-content">
-      <section class="section hero">
-        <div class="hero-content fade-in showing">
-          <div class="hero-subtitle">BIENVENUE CHEZ</div>
-          <h1>WEMOVE – Ensemble avec vous</h1>
-          <p>Nous créons des solutions technologiques élégantes et durables, issues de l'innovation africaine.</p>
-          <div class="btn-group">
-            <a href="javascript:void(0)" onclick="showPage('about')" class="btn btn-secondary"><i class="fas fa-info-circle"></i> Qu'est-ce que WEMOVE ?</a>
-            <a href="javascript:void(0)" onclick="showPage('services')" class="btn btn-secondary"><i class="fas fa-laptop-code"></i> Nos services</a>
-            <a href="javascript:void(0)" onclick="showPage('team')" class="btn btn-secondary"><i class="fas fa-users"></i> Notre équipe</a>
-            <a href="javascript:void(0)" onclick="showPage('contact')" class="btn btn-primary"><i class="fas fa-envelope"></i> Nous contacter</a>
-          </div>
+    <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" class="center-logo" alt="Tech Center">
+
+    <div id="word-container"></div>
+
+    <header class="fixed top-0 w-full z-[100] glass px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 glass rounded-xl flex items-center justify-center font-bold text-[8px] rotate-[-10deg] border-pink-500/50 border">
+                WEMOVE
+            </div>
+            <h1 class="font-extrabold text-xl tracking-tighter">WEMOVE</h1>
         </div>
-      </section>
+
+        <div class="flex items-center gap-6">
+            <div class="relative group cursor-pointer text-sm font-semibold">
+                <span id="lang-btn">FR</span>
+                <div class="absolute top-full right-0 mt-3 w-28 glass rounded-xl hidden group-hover:block overflow-hidden">
+                    <div class="p-3 hover:bg-white/10" onclick="translatePage('fr')">FR - Français</div>
+                    <div class="p-3 hover:bg-white/10" onclick="translatePage('en')">EN - English</div>
+                </div>
+            </div>
+
+            <div class="relative group cursor-pointer">
+                <img src="https://flagcdn.com/w40/cm.png" id="flag-btn" class="w-6 h-4 rounded-sm">
+                <div class="absolute top-full right-0 mt-3 w-32 glass rounded-xl hidden group-hover:block overflow-hidden">
+                    <div class="p-3 hover:bg-white/10 flex items-center gap-2" onclick="setFlag('sn')"><img src="https://flagcdn.com/w20/sn.png"> Sénégal</div>
+                    <div class="p-3 hover:bg-white/10 flex items-center gap-2" onclick="setFlag('ci')"><img src="https://flagcdn.com/w20/ci.png"> Côte d'Ivoire</div>
+                </div>
+            </div>
+
+            <button id="hamburger" class="text-2xl"><i class="fa fa-bars-staggered"></i></button>
+        </div>
+    </header>
+
+    <div id="mobile-menu" class="fixed inset-0 z-[110] glass translate-x-full flex flex-col items-center justify-center gap-8 text-3xl font-bold">
+        <button id="close-menu" class="absolute top-6 right-6 text-4xl">&times;</button>
+        <a href="#accueil" class="hover:text-pink-500 transition" onclick="toggleMenu()">Accueil</a>
+        <a href="#propos" class="hover:text-pink-500 transition" onclick="toggleMenu()">À Propos</a>
+        <a href="#services" class="hover:text-pink-500 transition" onclick="toggleMenu()">Services</a>
+        <a href="#contact" class="hover:text-pink-500 transition" onclick="toggleMenu()">Contact</a>
     </div>
 
-    <!-- Page À propos -->
-    <div id="about-page" class="page-content" style="display:none;">
-      <section class="section">
-        <h1>Notre Histoire</h1>
-        <p>WEMOVE est né de la rencontre entre une passion pour la technologie et un profond respect pour les traditions africaines. Nous croyons que l'innovation numérique doit être au service de l'humain, tout en honorant son héritage culturel.</p>
-        <div class="presentation fade-in">
-          <h2>Notre Philosophie</h2>
-          <p>Notre approche est celle de l'artisan numérique : nous prenons le temps de comprendre, de façonner, de polir chaque détail. Comme les tisserands de bogolan ou les sculpteurs sur bois, nous accordons une importance fondamentale au processus créatif.</p>
-          <p>Nous pratiquons ce que nous appelons "l'innovation douce" : une technologie qui s'intègre naturellement, qui respecte les rythmes humains et qui valorise la beauté du simple.</p>
-        </div>
-        <div class="presentation fade-in" style="margin-top:2rem;">
-          <h2>Nos Valeurs</h2>
-          <div class="values-grid">
-            <div>
-              <h3>Authenticité</h3>
-              <p>Nous restons fidèles à notre identité africaine dans chaque projet.</p>
+    <main class="relative pt-32 pb-20 px-6 max-w-5xl mx-auto">
+        
+        <section id="accueil" class="min-h-[70vh] flex flex-col items-center text-center">
+            <div class="glass px-4 py-1 rounded-full text-xs mb-8 border-pink-500/30">
+                <span data-key="badge">L'Afrique Numérique est en marche</span> ✦
             </div>
-            <div>
-              <h3>Minimalisme</h3>
-              <p>Nous croyons que la simplicité est la sophistication ultime.</p>
-            </div>
-            <div>
-              <h3>Durabilité</h3>
-              <p>Nous créons des solutions qui durent, tant techniquement qu'humainement.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+            <h2 class="text-6xl md:text-8xl font-black mb-6 leading-none">WE MOVE <br> 
+                <span class="bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 bg-clip-text text-transparent">TO THE WORLD</span>
+            </h2>
+            <p class="text-lg opacity-80 max-w-2xl mb-12" data-key="hero-sub">
+                Nous créons des infrastructures digitales haute performance et des solutions d'IA pour propulser les entreprises africaines sur la scène mondiale.
+            </p>
+            <button class="bg-white text-black px-10 py-5 rounded-2xl font-bold hover:scale-105 transition shadow-xl" data-key="btn-project">
+                Discuter du projet 🚀
+            </button>
+        </section>
 
-    <!-- Page Services -->
-    <div id="services-page" class="page-content" style="display:none;">
-      <section class="section hero-services">
-        <div class="hero-content fade-in">
-          <div class="hero-subtitle">NOS EXPERTISES</div>
-          <h1>Services Tech sur Mesure</h1>
-          <p>Découvrez notre gamme complète de services technologiques conçus pour propulser votre entreprise vers l'avenir numérique.</p>
-          <p>Chaque solution est adaptée aux défis et opportunités spécifiques du marché africain.</p>
-        </div>
-      </section>
-      <section class="section">
-        <h2 class="text-center">Nos Domaines d'Expertise</h2>
-        <p class="text-center">Des solutions intégrées pour votre transformation digitale</p>
-        <!-- Carousel -->
-        <div class="services-carousel">
-          <div class="carousel-container" id="carousel-container">
-            <!-- Service 1 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-code"></i></div>
-              <h3>Développement Web</h3>
-              <p>Création de sites web et applications sur mesure, optimisés pour les marchés africains.</p>
-              <ul class="service-features">
-                <li>Sites vitrines responsives</li>
-                <li>Applications web complexes</li>
-                <li>E-commerce adapté à l'Afrique</li>
-                <li>Maintenance et support</li>
-              </ul>
+        <section id="services" class="mt-32">
+            <h3 class="text-3xl font-bold mb-10 flex items-center gap-4">
+                <span class="w-12 h-[2px] bg-pink-500"></span> EXPLORER NOS SERVICES
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass p-8 rounded-[2rem] border-white/5">
+                    <div class="w-14 h-14 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 text-2xl text-blue-400">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Web & Cloud</h4>
+                    <p class="opacity-60 text-sm">Développement d'applications scalables et gestion d'infrastructures Cloud hybrides.</p>
+                </div>
+                <div class="glass p-8 rounded-[2rem] border-white/5">
+                    <div class="w-14 h-14 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 text-2xl text-purple-400">
+                        <i class="fa fa-brain"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">IA & Data</h4>
+                    <p class="opacity-60 text-sm">Modèles de Machine Learning personnalisés pour l'analyse prédictive et l'automatisation.</p>
+                </div>
+                <div class="glass p-8 rounded-[2rem] border-white/5">
+                    <div class="w-14 h-14 bg-pink-500/20 rounded-2xl flex items-center justify-center mb-6 text-2xl text-pink-400">
+                        <i class="fa fa-rocket"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Tech Strategy</h4>
+                    <p class="opacity-60 text-sm">Accompagnement dans la transformation digitale et l'audit de systèmes complexes.</p>
+                </div>
             </div>
-            <!-- Service 2 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
-              <h3>Applications Mobile</h3>
-              <p>Applications natives et cross-platform performantes, même avec connexion limitée.</p>
-              <ul class="service-features">
-                <li>iOS et Android natifs</li>
-                <li>Applications React Native/Flutter</li>
-                <li>Optimisation pour faible débit</li>
-                <li>Intégration paiement mobile</li>
-              </ul>
-            </div>
-            <!-- Service 3 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-brain"></i></div>
-              <h3>Intelligence Artificielle</h3>
-              <p>Solutions d'IA adaptées aux besoins africains : analyse, automatisation, prédiction.</p>
-              <ul class="service-features">
-                <li>Chatbots intelligents</li>
-                <li>Analyse de données</li>
-                <li>Reconnaissance vocale/textuelle</li>
-                <li>Solutions prédictives</li>
-              </ul>
-            </div>
-            <!-- Service 4 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
-              <h3>Cybersécurité</h3>
-              <p>Protection de vos systèmes et données avec des solutions adaptées aux entreprises africaines.</p>
-              <ul class="service-features">
-                <li>Audits de sécurité</li>
-                <li>Protection des données</li>
-                <li>Formation des équipes</li>
-                <li>Surveillance 24/7</li>
-              </ul>
-            </div>
-            <!-- Service 5 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-cloud"></i></div>
-              <h3>Cloud & Infrastructure</h3>
-              <p>Migration, gestion et optimisation de vos infrastructures cloud pour plus de flexibilité.</p>
-              <ul class="service-features">
-                <li>Migration vers le cloud</li>
-                <li>Gestion d'infrastructure</li>
-                <li>Solutions hybrides</li>
-                <li>Backup et récupération</li>
-              </ul>
-            </div>
-            <!-- Service 6 -->
-            <div class="service-card fade-in showing">
-              <div class="service-icon"><i class="fas fa-chart-line"></i></div>
-              <h3>Conseil Digital</h3>
-              <p>Accompagnement stratégique pour votre transformation numérique réussie.</p>
-              <ul class="service-features">
-                <li>Stratégie digitale</li>
-                <li>Audit technologique</li>
-                <li>Roadmap de transformation</li>
-                <li>Formation d'équipes</li>
-              </ul>
-            </div>
-          </div>
-          <!-- Flèches carousel -->
-          <div class="carousel-nav">
-            <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
-            <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
-          </div>
-        </div>
-        <div class="text-center mt-4">
-          <h3>Vous avez un projet spécifique ?</h3>
-          <p>Nous créons également des solutions sur mesure adaptées à vos besoins uniques.</p>
-          <a href="javascript:void(0)" onclick="showPage('contact')" class="btn btn-primary mt-2">
-            <i class="fas fa-envelope"></i> Nous contacter
-          </a>
-        </div>
-      </section>
-    </div>
+        </section>
 
-    <!-- Page Équipe -->
-    <div id="team-page" class="page-content" style="display:none;">
-      <section class="section">
-        <h1>Notre Équipe d'Experts</h1>
-        <p>Une famille de créatifs passionnés, unis par une vision commune : construire une technologie africaine élégante, humaine et durable.</p>
-        <div class="team-grid">
-          <!-- Dev Knut -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">DK</div>
-              <div>
-                <div class="member-name">DEV KNUT</div>
-                <div class="member-role">Architecte Systèmes & Expert Backend</div>
-              </div>
+        <section id="propos" class="mt-32 glass p-10 rounded-[3rem]">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-4xl font-black mb-6" data-key="about-title">À Propos</h3>
+                    <p class="opacity-70 leading-relaxed mb-6">
+                        WEMOVE est une agence de technologie hybride basée en Afrique. Nous fusionnons l'innovation occidentale avec les réalités du marché local pour créer des produits uniques.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-sm"><i class="fa fa-check text-pink-500"></i> Excellence technique (Code & Infra)</li>
+                        <li class="flex items-center gap-3 text-sm"><i class="fa fa-check text-pink-500"></i> Vision panafricaine</li>
+                    </ul>
+                </div>
+                <div class="h-64 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-2xl rotate-3 opacity-50 blur-sm"></div>
             </div>
-            <p>Spécialiste des infrastructures complexes et des architectures évolutives. Il transforme les défis techniques en solutions élégantes.</p>
-            <div class="member-skills">
-              <span class="skill-tag">Architecture</span>
-              <span class="skill-tag">Backend</span>
-              <span class="skill-tag">DevOps</span>
+        </section>
+
+        <section id="equipe" class="mt-32">
+            <h3 class="text-3xl font-bold mb-10">NOTRE ÉQUIPE</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass p-6 rounded-3xl text-center">
+                    <div class="w-20 h-20 bg-white/5 rounded-full mx-auto mb-4 border border-white/10 flex items-center justify-center text-xl font-bold">KN</div>
+                    <h5 class="font-bold">DEV KNUT</h5>
+                    <p class="text-[10px] uppercase text-pink-500">Lead Architect</p>
+                </div>
+                <div class="glass p-6 rounded-3xl text-center">
+                    <div class="w-20 h-20 bg-white/5 rounded-full mx-auto mb-4 border border-white/10 flex items-center justify-center text-xl font-bold">SK</div>
+                    <h5 class="font-bold">DEV SENKU</h5>
+                    <p class="text-[10px] uppercase text-pink-500">IA Specialist</p>
+                </div>
             </div>
-          </div>
-          <!-- Dev Senku -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">DS</div>
-              <div>
-                <div class="member-name">DEV SENKU</div>
-                <div class="member-role">Génie de l'IA & Data Scientist</div>
-              </div>
+        </section>
+
+        <section id="contact" class="mt-32 text-center">
+            <h3 class="text-4xl font-black mb-8">PRÊT À NOUS REJOINDRE ?</h3>
+            <a href="mailto:hello@wemove.tech" class="glass px-12 py-6 rounded-full inline-block font-bold hover:bg-white/10 transition">
+                NOUS CONTACTER <i class="fa fa-paper-plane ml-2"></i>
+            </a>
+        </section>
+
+    </main>
+
+    <footer class="bg-black/80 backdrop-blur-xl p-12 mt-20 border-t border-white/10">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between gap-12">
+            <div class="max-w-xs">
+                <h4 class="font-black text-2xl mb-4">WEMOVE</h4>
+                <p class="text-sm opacity-50">Solutions tech pour l'Afrique numérique. Du code à l'infra, de l'IA au design.</p>
             </div>
-            <p>Visionnaire de l'intelligence artificielle, il crée des solutions intelligentes qui anticipent les besoins et optimisent les processus.</p>
-            <div class="member-skills">
-              <span class="skill-tag">IA/ML</span>
-              <span class="skill-tag">Data Science</span>
-              <span class="skill-tag">Algorithmes</span>
+            <div class="flex gap-16">
+                <div class="flex flex-col gap-4">
+                    <h5 class="font-bold">Navigation</h5>
+                    <a href="#accueil" class="text-sm opacity-50 hover:opacity-100">Accueil</a>
+                    <a href="#propos" class="text-sm opacity-50 hover:opacity-100">À propos</a>
+                    <a href="#services" class="text-sm opacity-50 hover:opacity-100">Services</a>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <h5 class="font-bold">Social</h5>
+                    <a href="#" class="text-sm opacity-50 hover:opacity-100">LinkedIn</a>
+                    <a href="#" class="text-sm opacity-50 hover:opacity-100">Twitter</a>
+                </div>
             </div>
-          </div>
-          <!-- Sen -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">SN</div>
-              <div>
-                <div class="member-name">SEN</div>
-                <div class="member-role">Designer UX/UI & Expert Frontend</div>
-              </div>
-            </div>
-            <p>Artiste du numérique, elle donne vie aux interfaces avec une esthétique minimaliste et une expérience utilisateur intuitive.</p>
-            <div class="member-skills">
-              <span class="skill-tag">UX/UI</span>
-              <span class="skill-tag">Frontend</span>
-              <span class="skill-tag">Design System</span>
-            </div>
-          </div>
-          <!-- Dev Yoshi -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">DY</div>
-              <div>
-                <div class="member-name">DEV YOSHI</div>
-                <div class="member-role">Développeur Full-Stack & DevOps</div>
-              </div>
-            </div>
-            <p>Polyvalent et créatif, il maîtrise l'art du code de bout en bout, garantissant fluidité et cohérence dans chaque projet.</p>
-            <div class="member-skills">
-              <span class="skill-tag">Full-Stack</span>
-              <span class="skill-tag">DevOps</span>
-              <span class="skill-tag">Architecture</span>
-            </div>
-          </div>
-          <!-- Mitnick -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">MT</div>
-              <div>
-                <div class="member-name">MITNICK</div>
-                <div class="member-role">Expert Cybersécurité & Pentester</div>
-              </div>
-            </div>
-            <p>Garde-fou numérique, il protège nos créations avec une rigueur absolue et anticipe les menaces avant qu'elles n'apparaissent.</p>
-            <div class="member-skills">
-              <span class="skill-tag">Sécurité</span>
-              <span class="skill-tag">Pentest</span>
-              <span class="skill-tag">Cryptographie</span>
-            </div>
-          </div>
-          <!-- Dev Crazy -->
-          <div class="team-member fade-in">
-            <div class="member-header">
-              <div class="member-avatar">DC</div>
-              <div>
-                <div class="member-name">DEV CRAZY</div>
-                <div class="member-role">Innovateur Tech & Développeur Créatif</div>
-              </div>
-            </div>
-            <p>Penseur hors cadre, il repousse les limites du possible et imagine les solutions de demain avec une créativité débridée.</p>
-            <div class="member-skills">
-              <span class="skill-tag">Innovation</span>
-              <span class="skill-tag">Creative Coding</span>
-              <span class="skill-tag">Prototypage</span>
-            </div>
-          </div>
         </div>
-      </section>
-    </div>
-
-    <!-- Page Contact -->
-    <div id="contact-page" class="page-content" style="display:none;">
-      <section class="section">
-        <h1>Prenez Contact</h1>
-        <p class="hero-description">Chaque grande collaboration commence par une conversation. Partagez-nous votre vision, et créons ensemble quelque chose de remarquable.</p>
-        <div class="contact-grid">
-          <!-- Infos Contact -->
-          <div class="contact-info fade-in">
-            <div class="contact-item">
-              <h3><i class="fas fa-envelope"></i> Email</h3>
-              <p>contact@wemove.tech</p>
-              <p style="font-size:0.9rem; color:var(--blue-accent);">Réponse sous 24h</p>
-            </div>
-            <div class="contact-item">
-              <h3><i class="fas fa-phone"></i> Téléphone</h3>
-              <p>+221 70 123 4567</p>
-              <p style="font-size:0.9rem; color:var(--blue-accent);">Lun-Ven, 9h-18h</p>
-            </div>
-            <div class="contact-item">
-              <h3><i class="fas fa-map-marker-alt"></i> Adresse</h3>
-              <p>1 Rue de l'Innovation, Douala, Cameroun</p>
-            </div>
-          </div>
-          <!-- Formulaire -->
-          <div class="contact-form fade-in">
-            <form id="contactForm">
-              <div class="form-group">
-                <label class="form-label" for="name">Nom</label>
-                <input type="text" id="name" class="form-input" placeholder="Votre nom">
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" id="email" class="form-input" placeholder="Votre email">
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="subject">Objet</label>
-                <input type="text" id="subject" class="form-input" placeholder="Sujet de votre message">
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="message">Message</label>
-                <textarea id="message" class="form-input" placeholder="Votre message..."></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">
-                <i class="fas fa-paper-plane"></i> Envoyer le message
-              </button>
-            </form>
-          </div>
+        <div class="text-center mt-20 opacity-20 text-[10px] tracking-widest uppercase">
+            © 2024 WEMOVE. TOUS DROITS RÉSERVÉS.
         </div>
-      </section>
-    </div>
-  </main>
+    </footer>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>WEMOVE</h3>
-        <p>Solutions tech pour l'Afrique numérique.</p>
-      </div>
-      <div class="footer-section">
-        <h3>Navigation</h3>
-        <ul class="footer-links">
-          <li><a href="javascript:void(0)" onclick="showPage('home')">Accueil</a></li>
-          <li><a href="javascript:void(0)" onclick="showPage('about')">À propos</a></li>
-          <li><a href="javascript:void(0)" onclick="showPage('services')">Services</a></li>
-          <li><a href="javascript:void(0)" onclick="showPage('team')">Équipe</a></li>
-          <li><a href="javascript:void(0)" onclick="showPage('contact')">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Contact</h3>
-        <p><i class="fas fa-envelope"></i> contact@wemove.tech</p>
-        <p><i class="fas fa-phone"></i> +221 70 123 4567</p>
-      </div>
-    </div>
-    <div class="copyright">
-      <p>© 2025 WEMOVE. Tous droits réservés.</p>
-    </div>
-  </footer>
-
-  <script>
-    // Navigation entre pages
-    function showPage(pageId) {
-      const pages = document.querySelectorAll('.page-content');
-      pages.forEach(p => p.style.display = 'none');
-      const target = document.getElementById(pageId + '-page');
-      if (target) {
-        target.style.display = 'block';
-        window.scrollTo({ top: 90, behavior: 'smooth' });
-        document.title = {
-          home: 'WEMOVE | Accueil',
-          about: 'WEMOVE | À propos',
-          services: 'WEMOVE | Services',
-          team: 'WEMOVE | Équipe',
-          contact: 'WEMOVE | Contact'
-        }[pageId] || 'WEMOVE';
-        // Trigger fade-in animations
-        target.querySelectorAll('.fade-in').forEach(el => {
-          setTimeout(() => { el.classList.add('showing'); }, 50);
-        });
-      }
-      // Cacher menu hamburger mobile après sélection
-      document.querySelector('.nav').classList.remove('show');
-      document.getElementById('hamburger').classList.remove('active');
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      showPage('home'); // page par défaut
-      // Scroll header effect
-      window.addEventListener('scroll', () => {
-        const header = document.querySelector('.header');
-        header.style.backgroundColor = window.scrollY > 100 ? 'rgba(0,0,0,0.98)' : 'rgba(0,0,0,0.95)';
-      });
-      // Hamburger toggle
-      const hamburger = document.getElementById('hamburger');
-      hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        document.querySelector('.nav').classList.toggle('show');
-      });
-      // Language/Country selectors (exemple de gestion)
-      document.getElementById('lang-select').addEventListener('change', (e) => {
-        // Ici : changer texte en fonction de la langue (non implémenté)
-        console.log('Langue sélectionnée :', e.target.value);
-      });
-      // Thème Nuit/Jour toggle
-      const themeToggle = document.getElementById('theme-toggle');
-      let darkMode = true;
-      themeToggle.addEventListener('click', () => {
-        darkMode = !darkMode;
-        if (darkMode) {
-          document.body.style.backgroundColor = 'var(--black)';
-          document.body.style.color = 'var(--gray-light)';
-        } else {
-          document.body.style.backgroundColor = 'var(--white)';
-          document.body.style.color = 'var(--gray-dark)';
+    <script>
+        // 1. Gestion des Gouttes (2 par seconde)
+        function createRaindrop() {
+            const drop = document.createElement('div');
+            drop.className = 'drop';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.top = '-20px';
+            drop.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 5000);
         }
-      });
-      // Formulaire de contact (simulation)
-      const contactForm = document.getElementById('contactForm');
-      if (contactForm) {
-        contactForm.addEventListener('submit', function(e){
-          e.preventDefault();
-          const name = this.querySelector('#name').value;
-          const email = this.querySelector('#email').value;
-          const subject = this.querySelector('#subject').value;
-          const message = this.querySelector('#message').value;
-          if (!name||!email||!subject||!message) {
-            alert('Veuillez remplir tous les champs');
-            return;
-          }
-          const submitBtn = this.querySelector('button[type="submit"]');
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-          submitBtn.disabled = true;
-          setTimeout(() => {
-            alert('Merci ' + name + ' ! Votre message a été envoyé avec succès.');
-            contactForm.reset();
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer le message';
-            submitBtn.disabled = false;
-            window.scrollTo({ top: 90, behavior: 'smooth' });
-          }, 1500);
+        setInterval(createRaindrop, 500);
+
+        // 2. Effet Ripple (Ondulation)
+        document.addEventListener('mousedown', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            const size = 50;
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - size/2) + 'px';
+            ripple.style.top = (e.clientY - size/2) + 'px';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
         });
-      }
-      // Ripple effect
-      document.querySelectorAll('.btn').forEach(btn => {
-        btn.addEventListener('click', function(e){
-          const circle = document.createElement('span');
-          const diameter = Math.max(this.clientWidth, this.clientHeight);
-          circle.style.width = circle.style.height = diameter + 'px';
-          circle.style.left = e.clientX - this.offsetLeft - diameter/2 + 'px';
-          circle.style.top = e.clientY - this.offsetTop - diameter/2 + 'px';
-          circle.classList.add('ripple');
-          this.appendChild(circle);
-          setTimeout(() => { circle.remove(); }, 600);
-        });
-      });
-      // Service carousel logic
-      const carousel = document.getElementById('carousel-container');
-      const totalSlides = carousel.children.length;
-      let slideIndex = 0, slideDir = 1;
-      function showSlide(idx) {
-        const offset = -idx * 320; // 300px width + 20 margin
-        carousel.style.transform = `translateX(${offset}px)`;
-      }
-      document.getElementById('next-btn').addEventListener('click', () => {
-        slideDir = 1;
-        slideIndex = Math.min(slideIndex+1, totalSlides-1);
-        showSlide(slideIndex);
-      });
-      document.getElementById('prev-btn').addEventListener('click', () => {
-        slideDir = -1;
-        slideIndex = Math.max(slideIndex-1, 0);
-        showSlide(slideIndex);
-      });
-      // Swipe support
-      let startX = null;
-      carousel.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
-      carousel.addEventListener('touchmove', e => {
-        if (!startX) return;
-        let diff = startX - e.touches[0].clientX;
-        if (diff > 50) { // swipe gauche
-          document.getElementById('next-btn').click();
-          startX = null;
-        } else if (diff < -50) { // swipe droit
-          document.getElementById('prev-btn').click();
-          startX = null;
+
+        // 3. Animation WEMOVE dispersée
+        const word = "WEMOVE";
+        const container = document.getElementById('word-container');
+        const colors = ['#ec4899', '#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+
+        function animateWEMOVE() {
+            container.innerHTML = '';
+            const letters = word.split('');
+            
+            letters.forEach((l, i) => {
+                const span = document.createElement('span');
+                span.className = 'letter';
+                span.innerText = l;
+                span.style.color = colors[i % colors.length];
+                span.style.left = (i * 50 - 150) + 'px';
+                container.appendChild(span);
+
+                // Séquence d'animation
+                setTimeout(() => {
+                    span.style.transition = 'all 1s ease';
+                    span.style.opacity = '1';
+                    span.style.transform = 'translateY(-20px)'; // Lévitation
+                    
+                    // Dispersion après 2 secondes
+                    setTimeout(() => {
+                        const randomX = (Math.random() - 0.5) * 1000;
+                        const randomY = (Math.random() - 0.5) * 1000;
+                        span.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomX/2}deg)`;
+                        span.style.opacity = '0';
+                    }, 2000);
+                }, i * 300);
+            });
         }
-      });
-      // Auto-scroll carousel
-      setInterval(() => {
-        if (slideIndex === totalSlides-1) slideDir = -1;
-        else if (slideIndex === 0) slideDir = 1;
-        slideIndex += slideDir;
-        showSlide(slideIndex);
-      }, 4000);
-      // Raindrops effect
-      setInterval(() => {
-        const drop = document.createElement('div');
-        drop.classList.add('drop');
-        drop.style.left = Math.random()*100 + 'vw';
-        document.body.appendChild(drop);
-        setTimeout(() => { drop.remove(); }, 3000);
-      }, 1000);
-    });
-  </script>
+        setInterval(animateWEMOVE, 6000);
+        animateWEMOVE();
+
+        // 4. Traduction Réelle
+        const translations = {
+            fr: { "badge": "L'Afrique Numérique est en marche", "btn-project": "Discuter du projet 🚀", "hero-sub": "Nous créons des infrastructures digitales haute performance." },
+            en: { "badge": "Digital Africa is on the move", "btn-project": "Discuss project 🚀", "hero-sub": "We create high-performance digital infrastructures." }
+        };
+
+        function translatePage(lang) {
+            document.getElementById('lang-btn').innerText = lang.toUpperCase();
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                el.innerText = translations[lang][key];
+            });
+        }
+
+        function setFlag(code) {
+            document.getElementById('flag-btn').src = `https://flagcdn.com/w40/${code}.png`;
+        }
+
+        // 5. Menu Hamburger
+        const menu = document.getElementById('mobile-menu');
+        const hamburger = document.getElementById('hamburger');
+        const closeMenu = document.getElementById('close-menu');
+
+        function toggleMenu() {
+            const isOpen = menu.style.transform === 'translateX(0%)';
+            menu.style.transform = isOpen ? 'translateX(100%)' : 'translateX(0%)';
+        }
+        hamburger.onclick = toggleMenu;
+        closeMenu.onclick = toggleMenu;
+    </script>
 </body>
 </html>
-
